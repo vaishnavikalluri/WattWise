@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WattWise — Energy Consumption Analytics Dashboard</title>
+    <style>
+        /* ── Reset & Root ─────────────────────────────── */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --bg-body:   #f0f6ff;
+            --bg-hero:   #e8f1fd;
+            --primary:   #1e3a8a;
+            --blue:      #3b82f6;
+            --blue-dark: #2563eb;
+            --sky:       #1d6fc4;
+            --white:     #ffffff;
+            --text-main: #1e2a3a;
+            --text-muted:#4b6080;
+            --card-bg:   #ffffff;
+            --border:    #d0e2f7;
+            --accent-bg: #dbeafe;
+        }
+
+        /* ── Base ────────────────────────────────────── */
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        /* ── Nav ─────────────────────────────────────── */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 40px;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            box-shadow: 0 1px 6px rgba(30,58,138,0.08);
+        }
+        .nav-brand {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+        }
+        .nav-brand span { color: var(--blue); }
+        nav a.nav-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        nav a.nav-link:hover { color: var(--primary); }
+
+        /* ── Hero ────────────────────────────────────── */
+        .hero {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 60px;
+            padding: 60px 60px 60px;
+            background: linear-gradient(135deg, #dbeafe 0%, #eff6ff 100%);
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .hero-text {
+            flex: 1;
+            text-align: left;
+        }
+        .hero-image-wrapper {
+            flex-shrink: 0;
+            width: 440px;
+        }
+        .hero-image-wrapper img {
+            width: 100%;
+            border-radius: 16px;
+            border: 1px solid #bfdbfe;
+            box-shadow: 0 8px 30px rgba(59,130,246,0.15);
+        }
+        .hero-badge {
+            display: inline-block;
+            background: #dbeafe;
+            border: 1px solid #93c5fd;
+            color: var(--sky);
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            padding: 5px 14px;
+            border-radius: 50px;
+            margin-bottom: 18px;
+        }
+        .hero h1 {
+            font-size: 4.5rem;
+            font-weight: 800;
+            letter-spacing: -1.5px;
+            line-height: 1.1;
+            margin-bottom: 14px;
+            color: var(--primary);
+        }
+        .hero h1 span { color: var(--blue); }
+        .hero h2 {
+            font-size: 1.5rem;
+            font-weight: 400;
+            color: var(--sky);
+            margin-bottom: 20px;
+        }
+        .hero p {
+            max-width: 520px;
+            font-size: 1.15rem;
+            color: var(--text-muted);
+            margin-bottom: 34px;
+            line-height: 1.7;
+        }
+        .btn-primary {
+            display: inline-block;
+            background: var(--blue);
+            color: var(--white);
+            padding: 14px 36px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(59,130,246,0.35);
+            transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+        }
+        .btn-primary:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 28px rgba(59,130,246,0.5);
+        }
+
+        /* ── Metric Cards ────────────────────────────── */
+        .metrics-strip {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 28px 24px 40px;
+        }
+        .metric-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-top: 3px solid var(--blue);
+            border-radius: 10px;
+            padding: 16px 20px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(30,58,138,0.07);
+        }
+        .metric-card .label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+        .metric-card .value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .metric-card .unit {
+            font-size: 1rem;
+            color: var(--text-muted);
+            margin-left: 4px;
+        }
+        .metric-card.anomaly .value { color: #dc2626; }
+
+        /* ── Analytics Wrapper ───────────────────────── */
+        .section-wrapper {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 50px 24px 80px;
+        }
+        .section-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 8px;
+            color: var(--primary);
+        }
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+            font-size: 1.05rem;
+        }
+
+        /* ── Collapsible Cards ───────────────────────── */
+        details {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            box-shadow: 0 2px 6px rgba(30,58,138,0.05);
+        }
+        details[open] {
+            border-color: #93c5fd;
+        }
+        summary {
+            list-style: none;
+            cursor: pointer;
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary);
+            user-select: none;
+            background: #f8fbff;
+        }
+        summary::-webkit-details-marker { display: none; }
+        summary .summary-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .section-icon {
+            width: 36px;
+            height: 36px;
+            background: #dbeafe;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+        .chevron {
+            font-size: 1rem;
+            color: var(--text-muted);
+            transition: transform 0.3s;
+        }
+        details[open] .chevron { transform: rotate(180deg); }
+        .details-body {
+            padding: 0 24px 28px;
+        }
+        .desc-text {
+            color: var(--text-muted);
+            font-size: 1rem;
+            margin-bottom: 20px;
+        }
+        .graph-wrapper {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .graph-wrapper img {
+            max-width: 80%;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 12px rgba(30,58,138,0.1);
+        }
+        .insight-box {
+            background: #eff6ff;
+            border-left: 4px solid var(--blue);
+            border-radius: 0 8px 8px 0;
+            padding: 18px 20px;
+        }
+        .insight-box h4 {
+            color: var(--sky);
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .insight-box ul {
+            padding-left: 18px;
+        }
+        .insight-box li {
+            color: var(--text-main);
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        /* ── Dataset Preview ─────────────────────────── */
+        .table-wrapper {
+            overflow-x: auto;
+            margin-top: 16px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        th {
+            background: #dbeafe;
+            color: var(--primary);
+            text-align: left;
+            padding: 10px 14px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        td {
+            padding: 10px 14px;
+            color: var(--text-main);
+            border-top: 1px solid var(--border);
+        }
+        tr:hover td { background: #f0f6ff; }
+
+        /* ── Summary & Conclusion ─────────────────────── */
+        /* Key Insights: 3 in row 1, 2 in row 2 (centred) */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 16px;
+        }
+        .summary-item {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            padding: 20px 18px;
+            color: var(--text-main);
+            font-size: 1rem;
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+        .summary-item::before {
+            content: "⚡";
+            font-size: 1rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .conclusion-box {
+            background: linear-gradient(135deg, #dbeafe, #eff6ff);
+            border: 1px solid #bfdbfe;
+            border-radius: 12px;
+            padding: 32px;
+            text-align: center;
+            margin-top: 60px;
+            margin-bottom: 20px;
+        }
+        .conclusion-box h2 {
+            font-size: 1.6rem;
+            margin-bottom: 14px;
+            color: var(--primary);
+        }
+        .conclusion-box p {
+            color: var(--text-muted);
+            max-width: 680px;
+            margin: 0 auto;
+            font-size: 1rem;
+        }
+
+        /* ── Footer ──────────────────────────────────── */
+        footer {
+            text-align: center;
+            padding: 28px 20px;
+            background: #dbeafe;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+        footer strong { color: var(--primary); }
+
+        /* ── Divider ─────────────────────────────────── */
+        .divider {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 60px 0 40px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav>
+    <div class="nav-brand">Watt<span>Wise</span></div>
+</nav>
+
+<!-- Hero Section -->
+<div style="background: linear-gradient(135deg, #dbeafe 0%, #eff6ff 100%);">
+<section class="hero">
+    <!-- Left: text -->
+    <div class="hero-text">
+        <h1>Watt<span>Wise</span></h1>
+        <h2>Energy Consumption Analytics Dashboard</h2>
+        <p>This dashboard analyzes electricity consumption data to identify demand trends, peak load periods, and abnormal energy usage spikes.</p>
+        <a href="#analytics" class="btn-primary">View Analytics ↓</a>
+    </div>
+    <!-- Right: image -->
+    <div class="hero-image-wrapper">
+        <img src="{{ url_for('static', filename='images/electricity.png') }}" alt="WattWise Energy Dashboard">
+    </div>
+</section>
+</div>
+
+<!-- Key Metrics Strip -->
+<div class="metrics-strip">
+    <div class="metric-card">
+        <div class="label">Total Consumption</div>
+        <div class="value">{{ "{:,.0f}".format(total_consumption) }}<span class="unit">MWh</span></div>
+    </div>
+    <div class="metric-card">
+        <div class="label">Avg Daily Consumption</div>
+        <div class="value">{{ "{:,.0f}".format(avg_daily) }}<span class="unit">MWh</span></div>
+    </div>
+    <div class="metric-card">
+        <div class="label">Maximum Peak Load</div>
+        <div class="value">{{ "{:,.0f}".format(peak_load) }}<span class="unit">MWh</span></div>
+    </div>
+    <div class="metric-card anomaly">
+        <div class="label">Detected Anomalies</div>
+        <div class="value">{{ num_anomalies }}</div>
+    </div>
+</div>
+
+<!-- Analytics Section -->
+<div id="analytics" class="section-wrapper">
+    <h2 class="section-title">Analytics Sections</h2>
+    <p class="section-subtitle">Click any section below to expand it and explore the analysis.</p>
+
+    <!-- Section 1 -->
+    <details>
+        <summary>
+            <span class="summary-left">
+                <span class="section-icon">📈</span>
+                Section 1 — Electricity Consumption Over Time
+            </span>
+            <span class="chevron">▼</span>
+        </summary>
+        <div class="details-body">
+            <p class="desc-text">This section visualizes electricity consumption over time to observe overall demand patterns and long-term trends across all monitored states.</p>
+            <div class="graph-wrapper">
+                <img src="{{ url_for('static', filename='plots/electricity_over_time.png') }}" alt="Electricity Consumption Over Time">
+            </div>
+            <div class="insight-box">
+                <h4>💡 Analytical Insight</h4>
+                <ul>
+                    <li>The data illustrates a steady increase in consumption moving across the time interval observed.</li>
+                    <li>Notable spikes are visible at key intervals, correlating to likely demand surges or industrial activity.</li>
+                    <li>Overall trend shows a consistent upward growth in baseload electricity requirements.</li>
+                </ul>
+            </div>
+        </div>
+    </details>
+
+    <!-- Section 2 -->
+    <details>
+        <summary>
+            <span class="summary-left">
+                <span class="section-icon">🗺️</span>
+                Section 2 — State Wise Electricity Consumption
+            </span>
+            <span class="chevron">▼</span>
+        </summary>
+        <div class="details-body">
+            <p class="desc-text">A comparison of average electricity consumption across different states or regions to understand geographic demand distribution.</p>
+            <div class="graph-wrapper">
+                <img src="{{ url_for('static', filename='plots/state_consumption.png') }}" alt="State Wise Consumption">
+            </div>
+            <div class="insight-box">
+                <h4>💡 Analytical Insight</h4>
+                <ul>
+                    <li>Maharashtra consistently records the highest average consumption driven by its industrial and population scale.</li>
+                    <li>Karnataka shows the lowest average, though it registered isolated high anomaly spikes.</li>
+                    <li>Differences arise from varying industrial output, urbanization rates, and climate cooling demands per region.</li>
+                </ul>
+            </div>
+        </div>
+    </details>
+
+    <!-- Section 3 -->
+    <details>
+        <summary>
+            <span class="summary-left">
+                <span class="section-icon">📅</span>
+                Section 3 — Monthly Energy Consumption Trend
+            </span>
+            <span class="chevron">▼</span>
+        </summary>
+        <div class="details-body">
+            <p class="desc-text">Aggregate electricity usage grouped by month to surface macro-level seasonal demand patterns across all states.</p>
+            <div class="graph-wrapper">
+                <img src="{{ url_for('static', filename='plots/monthly_trend.png') }}" alt="Monthly Energy Trend">
+            </div>
+            <div class="insight-box">
+                <h4>💡 Analytical Insight</h4>
+                <ul>
+                    <li>Monthly consumption shows a clear rising pattern as the year progresses through the tracked period.</li>
+                    <li>Higher electricity demand months align with warmer temperatures, increasing cooling appliance usage.</li>
+                    <li>Seasonal industrial ramping phases also contribute to the cumulative month-over-month rise.</li>
+                </ul>
+            </div>
+        </div>
+    </details>
+
+    <!-- Section 4 -->
+    <details>
+        <summary>
+            <span class="summary-left">
+                <span class="section-icon">🔴</span>
+                Section 4 — Peak Load Period Analysis
+            </span>
+            <span class="chevron">▼</span>
+        </summary>
+        <div class="details-body">
+            <p class="desc-text">Identifies the specific dates on which combined electricity demand across all regions reached its absolute maximum level.</p>
+            <div class="graph-wrapper">
+                <img src="{{ url_for('static', filename='plots/peak_load.png') }}" alt="Peak Load Periods">
+            </div>
+            <div class="insight-box">
+                <h4>💡 Analytical Insight</h4>
+                <ul>
+                    <li>The highlighted red point captures the day of maximum concurrent energy draw from the grid.</li>
+                    <li>Recognizing peak intervals allows energy providers to schedule peaker plants and prevent blackouts.</li>
+                    <li>Proactive peak management reduces overload risks and optimizes load balancing across the grid.</li>
+                </ul>
+            </div>
+        </div>
+    </details>
+
+    <!-- Section 5 -->
+    <details>
+        <summary>
+            <span class="summary-left">
+                <span class="section-icon">⚠️</span>
+                Section 5 — Anomaly Detection (Abnormal Spikes)
+            </span>
+            <span class="chevron">▼</span>
+        </summary>
+        <div class="details-body">
+            <p class="desc-text">Uses machine learning (IsolationForest) to flag data points that deviate significantly from normal consumption behavior.</p>
+            <div class="graph-wrapper">
+                <img src="{{ url_for('static', filename='plots/anomalies.png') }}" alt="Anomaly Detection">
+            </div>
+            <div class="insight-box">
+                <h4>💡 Analytical Insight</h4>
+                <ul>
+                    <li>Red points indicate statistically abnormal electricity draws that fall outside expected bounds.</li>
+                    <li>Possible causes include extreme weather events, sudden industrial surges, or equipment faults.</li>
+                    <li>Early anomaly identification allows grid operators to investigate causes and improve resilience.</li>
+                </ul>
+            </div>
+        </div>
+    </details>
+
+    <!-- Dataset Preview -->
+    <details open>
+        <summary>
+            <span class="summary-left">
+                <span class="section-icon">🗃️</span>
+                Dataset Preview
+            </span>
+            <span class="chevron">▼</span>
+        </summary>
+        <div class="details-body">
+            <p class="desc-text">Showing the first 5 rows of the processed dataset for transparency and raw data comprehension.</p>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>State / Region</th>
+                            <th>Consumption (MWh)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in preview_data %}
+                        <tr>
+                            <td>{{ row.date }}</td>
+                            <td>{{ row.state }}</td>
+                            <td>{{ row.consumption_mwh }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </details>
+
+    <hr class="divider">
+
+    <!-- Key Insights Summary -->
+    <h2 class="section-title">Key Insights Summary</h2>
+    <p class="section-subtitle">Important observations extracted from the analysis.</p>
+    <div class="summary-grid">
+        <div class="summary-item">Electricity demand shows a consistent upward trend across the observation period.</div>
+        <div class="summary-item">Maharashtra and Tamil Nadu are the highest contributing states to overall consumption.</div>
+        <div class="summary-item">Monthly aggregation reveals increasing seasonal demand, especially in warmer months.</div>
+        <!-- Row 2: 2 cards centred via a sub-grid wrapper -->
+        <div class="summary-item" style="grid-column: 1 / 2;">Peak load periods highlight critical electricity demand windows requiring proactive grid management.</div>
+        <div class="summary-item" style="grid-column: 2 / 3;">Anomaly detection successfully flags unusual consumption spikes for further investigation.</div>
+    </div>
+
+    <!-- Conclusion -->
+    <div class="conclusion-box">
+        <h2>Conclusion</h2>
+        <p>The WattWise dashboard provides valuable insights into electricity consumption behavior by analyzing usage patterns and detecting abnormal spikes. These insights can help energy providers better manage electricity distribution and anticipate future demand.</p>
+    </div>
+
+</div>
+
+<!-- Footer -->
+<footer>
+    <p><strong>WattWise</strong> — Energy Consumption Analytics Dashboard</p>
+    <p style="margin-top:6px;">Built with Python · Flask · Pandas · Matplotlib · scikit-learn</p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,37 @@
+date,state,consumption_mwh
+2025-01-01,Maharashtra,5200
+2025-01-01,Karnataka,4100
+2025-01-01,Tamil Nadu,4700
+2025-01-08,Maharashtra,5350
+2025-01-08,Karnataka,4180
+2025-01-08,Tamil Nadu,4780
+2025-01-15,Maharashtra,5480
+2025-01-15,Karnataka,4320
+2025-01-15,Tamil Nadu,4890
+2025-01-22,Maharashtra,5600
+2025-01-22,Karnataka,4450
+2025-01-22,Tamil Nadu,5010
+2025-02-01,Maharashtra,5720
+2025-02-01,Karnataka,4560
+2025-02-01,Tamil Nadu,5140
+2025-02-08,Maharashtra,5860
+2025-02-08,Karnataka,4680
+2025-02-08,Tamil Nadu,5260
+2025-02-15,Maharashtra,5980
+2025-02-15,Karnataka,9200
+2025-02-15,Tamil Nadu,5370
+2025-02-22,Maharashtra,6100
+2025-02-22,Karnataka,4820
+2025-02-22,Tamil Nadu,5480
+2025-03-01,Maharashtra,6220
+2025-03-01,Karnataka,4940
+2025-03-01,Tamil Nadu,5590
+2025-03-08,Maharashtra,6360
+2025-03-08,Karnataka,5080
+2025-03-08,Tamil Nadu,5710
+2025-03-15,Maharashtra,6480
+2025-03-15,Karnataka,5190
+2025-03-15,Tamil Nadu,5820
+2025-03-22,Maharashtra,6640
+2025-03-22,Karnataka,5310
+2025-03-22,Tamil Nadu,8700
