@@ -227,17 +227,6 @@
             align-items: center;
             gap: 14px;
         }
-        .section-icon {
-            width: 36px;
-            height: 36px;
-            background: #dbeafe;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.1rem;
-            flex-shrink: 0;
-        }
         .chevron {
             font-size: 1rem;
             color: var(--text-muted);
@@ -429,8 +418,7 @@
     <details>
         <summary>
             <span class="summary-left">
-                <span class="section-icon">📈</span>
-                Section 1 — Electricity Consumption Over Time
+                1. Electricity Consumption Over Time
             </span>
             <span class="chevron">▼</span>
         </summary>
@@ -440,7 +428,7 @@
                 <img src="{{ url_for('static', filename='plots/electricity_over_time.png') }}" alt="Electricity Consumption Over Time">
             </div>
             <div class="insight-box">
-                <h4>💡 Analytical Insight</h4>
+                <h4>Analytical Insight</h4>
                 <ul>
                     <li>The data illustrates a steady increase in consumption moving across the time interval observed.</li>
                     <li>Notable spikes are visible at key intervals, correlating to likely demand surges or industrial activity.</li>
@@ -454,8 +442,7 @@
     <details>
         <summary>
             <span class="summary-left">
-                <span class="section-icon">🗺️</span>
-                Section 2 — State Wise Electricity Consumption
+                2. State Wise Electricity Consumption
             </span>
             <span class="chevron">▼</span>
         </summary>
@@ -465,7 +452,7 @@
                 <img src="{{ url_for('static', filename='plots/state_consumption.png') }}" alt="State Wise Consumption">
             </div>
             <div class="insight-box">
-                <h4>💡 Analytical Insight</h4>
+                <h4>Analytical Insight</h4>
                 <ul>
                     <li>Maharashtra consistently records the highest average consumption driven by its industrial and population scale.</li>
                     <li>Karnataka shows the lowest average, though it registered isolated high anomaly spikes.</li>
@@ -479,8 +466,7 @@
     <details>
         <summary>
             <span class="summary-left">
-                <span class="section-icon">📅</span>
-                Section 3 — Monthly Energy Consumption Trend
+                3. Monthly Energy Consumption Trend
             </span>
             <span class="chevron">▼</span>
         </summary>
@@ -490,7 +476,7 @@
                 <img src="{{ url_for('static', filename='plots/monthly_trend.png') }}" alt="Monthly Energy Trend">
             </div>
             <div class="insight-box">
-                <h4>💡 Analytical Insight</h4>
+                <h4>Analytical Insight</h4>
                 <ul>
                     <li>Monthly consumption shows a clear rising pattern as the year progresses through the tracked period.</li>
                     <li>Higher electricity demand months align with warmer temperatures, increasing cooling appliance usage.</li>
@@ -504,8 +490,7 @@
     <details>
         <summary>
             <span class="summary-left">
-                <span class="section-icon">🔴</span>
-                Section 4 — Peak Load Period Analysis
+                4. Peak Load Period Analysis
             </span>
             <span class="chevron">▼</span>
         </summary>
@@ -515,7 +500,7 @@
                 <img src="{{ url_for('static', filename='plots/peak_load.png') }}" alt="Peak Load Periods">
             </div>
             <div class="insight-box">
-                <h4>💡 Analytical Insight</h4>
+                <h4>Analytical Insight</h4>
                 <ul>
                     <li>The highlighted red point captures the day of maximum concurrent energy draw from the grid.</li>
                     <li>Recognizing peak intervals allows energy providers to schedule peaker plants and prevent blackouts.</li>
@@ -529,8 +514,7 @@
     <details>
         <summary>
             <span class="summary-left">
-                <span class="section-icon">⚠️</span>
-                Section 5 — Anomaly Detection (Abnormal Spikes)
+                5. Anomaly Detection (Abnormal Spikes)
             </span>
             <span class="chevron">▼</span>
         </summary>
@@ -540,7 +524,7 @@
                 <img src="{{ url_for('static', filename='plots/anomalies.png') }}" alt="Anomaly Detection">
             </div>
             <div class="insight-box">
-                <h4>💡 Analytical Insight</h4>
+                <h4>Analytical Insight</h4>
                 <ul>
                     <li>Red points indicate statistically abnormal electricity draws that fall outside expected bounds.</li>
                     <li>Possible causes include extreme weather events, sudden industrial surges, or equipment faults.</li>
@@ -554,28 +538,25 @@
     <details open>
         <summary>
             <span class="summary-left">
-                <span class="section-icon">🗃️</span>
                 Dataset Preview
             </span>
             <span class="chevron">▼</span>
         </summary>
         <div class="details-body">
-            <p class="desc-text">Showing the first 5 rows of the processed dataset for transparency and raw data comprehension.</p>
+            <p class="desc-text">Showing names and energy data from the processed records.</p>
             <div class="table-wrapper">
                 <table>
                     <thead>
                         <tr>
-                            <th>Date</th>
-                            <th>State / Region</th>
-                            <th>Consumption (MWh)</th>
+                            <th>Name</th>
+                            <th>Energy Data (MWh)</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for row in preview_data %}
                         <tr>
-                            <td>{{ row.date }}</td>
-                            <td>{{ row.state }}</td>
-                            <td>{{ row.consumption_mwh }}</td>
+                            <td>{{ row.name }}</td>
+                            <td>{{ row.energy_data }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>

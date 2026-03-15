@@ -233,9 +233,9 @@
         </div>
     </div>
 
-    <!-- Section 1 -->
+    <!-- 1 -->
     <div class="card">
-        <h2>Section 1 — Electricity Consumption Over Time</h2>
+        <h2>1. Electricity Consumption Over Time</h2>
         <p>This section visualizes electricity consumption over time to observe overall demand patterns and long-term trends.</p>
         
         <div class="content-row">
@@ -254,9 +254,9 @@
         </div>
     </div>
 
-    <!-- Section 2 -->
+    <!-- 2 -->
     <div class="card">
-        <h2>Section 2 — State or Region Wise Consumption</h2>
+        <h2>2. State or Region Wise Consumption</h2>
         <p>This section compares electricity consumption across different states or regions.</p>
         
         <div class="content-row reverse">
@@ -275,9 +275,9 @@
         </div>
     </div>
 
-    <!-- Section 3 -->
+    <!-- 3 -->
     <div class="card">
-        <h2>Section 3 — Monthly Energy Consumption Trend</h2>
+        <h2>3. Monthly Energy Consumption Trend</h2>
         <p>This section aggregates electricity consumption by month to identify seasonal demand patterns.</p>
         
         <div class="content-row">
@@ -295,9 +295,9 @@
         </div>
     </div>
 
-    <!-- Section 4 -->
+    <!-- 4 -->
     <div class="card">
-        <h2>Section 4 — Peak Load Period Analysis</h2>
+        <h2>4. Peak Load Period Analysis</h2>
         <p>This section identifies the time periods when electricity demand reaches its highest levels.</p>
         
         <div class="content-row reverse">
@@ -315,9 +315,9 @@
         </div>
     </div>
 
-    <!-- Section 5 -->
+    <!-- 5 -->
     <div class="card">
-        <h2>Section 5 — Anomaly Detection (Abnormal Spikes)</h2>
+        <h2>5. Anomaly Detection (Abnormal Spikes)</h2>
         <p>This section highlights abnormal spikes in electricity consumption using anomaly detection techniques.</p>
         
         <div class="content-row">
@@ -338,22 +338,20 @@
     <!-- Dataset Preview Section -->
     <div class="card">
         <h2>Dataset Preview</h2>
-        <p>Showing the first 5 records of the processed dataset to aid raw data comprehension.</p>
+        <p>Showing names and energy data from the processed records.</p>
         
         <table>
             <thead>
                 <tr>
-                    <th>Date</th>
-                    <th>State/Region</th>
-                    <th>Consumption (MWh)</th>
+                    <th>Name</th>
+                    <th>Energy Data (MWh)</th>
                 </tr>
             </thead>
             <tbody>
                 {% for row in preview_data %}
                 <tr>
-                    <td>{{ row.date }}</td>
-                    <td>{{ row.state }}</td>
-                    <td>{{ row.consumption_mwh }}</td>
+                    <td>{{ row.name }}</td>
+                    <td>{{ row.energy_data }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
