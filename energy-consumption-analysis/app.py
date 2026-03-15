@@ -26,10 +26,13 @@ def home():
     peak_load = daily_totals.max()
     num_anomalies = int(df_anomalies['is_anomaly'].sum())
 
-    # Dataset preview (first 5 rows)
+    # Dataset preview with simplified columns for display
     preview_df = df_clean.head(5).copy()
-    preview_df['date'] = preview_df['date'].dt.strftime('%Y-%m-%d')
-    preview_data = preview_df.to_dict('records')
+    preview_df = preview_df.rename(columns={
+        'state': 'name',
+        'consumption_mwh': 'energy_data'
+    })
+    preview_data = preview_df[['name', 'energy_data']].to_dict('records')
 
     return render_template('home.html',
                            total_consumption=total_consumption,
@@ -59,10 +62,13 @@ def dashboard():
     
     num_anomalies = int(df_anomalies['is_anomaly'].sum())
     
-    # Dataset Preview (first 5 rows)
+    # Dataset preview with simplified columns for display
     preview_df = df_clean.head(5).copy()
-    preview_df['date'] = preview_df['date'].dt.strftime('%Y-%m-%d')
-    preview_data = preview_df.to_dict('records')
+    preview_df = preview_df.rename(columns={
+        'state': 'name',
+        'consumption_mwh': 'energy_data'
+    })
+    preview_data = preview_df[['name', 'energy_data']].to_dict('records')
     
     # Render HTML dashboard
     return render_template('dashboard.html', 
